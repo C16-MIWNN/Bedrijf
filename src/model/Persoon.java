@@ -18,16 +18,18 @@ public class Persoon {
     private String naam;
     private String woonplaats;
     private double maandsalaris;
+    private Afdeling afdeling;
 
-    public Persoon(String naam, String woonplaats, double maandsalaris) {
+    public Persoon(String naam, String woonplaats, double maandsalaris, Afdeling afdeling) {
         this.personeelsnummer = ++aantalPersonen;
         this.naam = naam;
         this.woonplaats = woonplaats;
         setMaandsalaris(maandsalaris);
+        this.afdeling = afdeling;
     }
 
     public Persoon(String naam) {
-        this(naam, DEFAULT_WOONPLAATS, DEFAULT_MAANDSALARIS);
+        this(naam, DEFAULT_WOONPLAATS, DEFAULT_MAANDSALARIS, new Afdeling());
     }
 
     public Persoon() {
@@ -54,6 +56,10 @@ public class Persoon {
         return naam;
     }
 
+    public String getWoonplaats() {
+        return woonplaats;
+    }
+
     public double getMaandsalaris() {
         return maandsalaris;
     }
@@ -65,5 +71,9 @@ public class Persoon {
         }
 
         this.maandsalaris = maandsalaris;
+    }
+
+    public Afdeling getAfdeling() {
+        return afdeling;
     }
 }
