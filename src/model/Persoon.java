@@ -4,7 +4,7 @@ package model;
  * @author Vincent Velthuizen
  * Dit is een persoon die op een manier betrokken is bij ons bedrijf.
  */
-public class Persoon {
+public abstract class Persoon implements Comparable<Persoon> {
     private static final String DEFAULT_NAAM = "Onbekend";
     private static final String DEFAULT_WOONPLAATS = "Onbekend";
 
@@ -30,8 +30,21 @@ public class Persoon {
         this(DEFAULT_NAAM);
     }
 
-    public double berekenJaarinkomen() {
-        return 0.0;
+    public abstract double berekenJaarinkomen();
+
+    @Override
+    public int compareTo(Persoon anderePersoon) {
+        int compareResult = this.naam.compareTo(anderePersoon.naam);
+
+        if (compareResult == 0) {
+            compareResult = this.woonplaats.compareTo(anderePersoon.woonplaats);
+        }
+
+        if (compareResult == 0) {
+            compareResult = Double.compare(this.berekenJaarinkomen(), anderePersoon.berekenJaarinkomen());
+        }
+
+        return compareResult;
     }
 
     @Override

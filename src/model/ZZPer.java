@@ -4,7 +4,7 @@ package model;
  * @author Vincent Velthuizen
  * Beschrijft mensen die extern door ons bedrijf worden ingehuurd
  */
-public class ZZPer extends Persoon {
+public class ZZPer extends Persoon implements Oproepbaar {
     private double uurtarief;
     private int urenGewerkt;
 
@@ -14,6 +14,7 @@ public class ZZPer extends Persoon {
         this.urenGewerkt = 0;
     }
 
+    @Override
     public void huurIn(int uren) {
         this.urenGewerkt += uren;
     }
