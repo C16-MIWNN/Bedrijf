@@ -62,4 +62,8 @@ public abstract class Persoon implements Comparable<Persoon> {
         }
         return naam;
     }
+
+    public Afdeling getAfdeling() {
+        return afdeling;
+    }
 }

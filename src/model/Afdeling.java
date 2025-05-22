@@ -21,11 +21,29 @@ public class Afdeling {
     }
 
     @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Afdeling andereAfdeling)) {
+            return false;
+        }
+
+        return this.afdelingsnaam.equals(andereAfdeling.afdelingsnaam);
+    }
+
+    @Override
+    public int hashCode() {
+        return afdelingsnaam.hashCode();
+    }
+
+    @Override
     public String toString() {
         return String.format("afdeling %s te %s", this.afdelingsnaam, this.afdelingsplaats);
     }
 
     public String alternativeString() {
         return String.format("%s te %s", this.afdelingsnaam, this.afdelingsplaats);
+    }
+
+    public String getAfdelingsnaam() {
+        return afdelingsnaam;
     }
 }

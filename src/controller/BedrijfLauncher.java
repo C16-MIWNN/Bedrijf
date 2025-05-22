@@ -2,6 +2,9 @@ package controller;
 
 import model.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InputMismatchException;
@@ -14,38 +17,91 @@ import java.util.Scanner;
 public class BedrijfLauncher {
 
     public static void main(String[] args) {
-        Scanner toetsenbord = new Scanner(System.in);
+        ArrayList<Afdeling> afdelingen = leesAfdelingenIn("resources/Afdelingen.txt");
 
-        System.out.print("Geef de naam: ");
-        String naam = toetsenbord.next();
+        ArrayList<Persoon> personen = leesPersonenIn("resources/Personen.csv", afdelingen);
 
-        System.out.print("Geef de woonplaats: ");
-        String woonplaats = toetsenbord.next();
+        Collections.sort(personen);
 
-        System.out.print("Geef de naam van de afdeling: ");
-        String afdelingsnaam = toetsenbord.next();
-
-        System.out.print("Geef de plaats van de afdeling: ");
-        String afdelingsplaats = toetsenbord.next();
-
-        Afdeling afdeling = new Afdeling(afdelingsnaam, afdelingsplaats);
-
-        Werknemer werknemer = null;
-
-        while (werknemer == null) {
-            System.out.print("Geef het maandsalaris: ");
-            double maandsalaris = toetsenbord.nextDouble();
-
-            try {
-                werknemer = new Werknemer(naam, woonplaats, afdeling, maandsalaris);
-            } catch (IllegalArgumentException illegalArgumentException) {
-                System.err.println(illegalArgumentException.getMessage());
-            } finally {
-                System.out.println("Je invoer is op de juiste wijze afgehandeld.");
-            }
+        for (Persoon persoon : personen) {
+            System.out.println(persoon);
         }
 
-        System.out.println(werknemer);
+        schrijfPersonenPerAfdeling("resources/PersonenPerAfdeling.txt", afdelingen, personen);
+    }
+
+    private static void schrijfPersonenPerAfdeling(String bestandsnaam,
+                                                   ArrayList<Afdeling> afdelingen,
+                                                   ArrayList<Persoon> personen) {
+        try (PrintWriter personenPerAfdelingSchrijver = new PrintWriter(bestandsnaam)) {
+            for (Afdeling afdeling : afdelingen) {
+                personenPerAfdelingSchrijver.printf("Afdeling: %s\n", afdeling.getAfdelingsnaam());
+
+                for (Persoon persoon : personen) {
+                    if (persoon.getAfdeling().equals(afdeling)) {
+                        personenPerAfdelingSchrijver.printf("-- %s\n", persoon);
+                    }
+                }
+
+                personenPerAfdelingSchrijver.println();
+            }
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.err.println("Het is niet gelukt het Personen per Afdeling bestand te openen.");
+        }
+    }
+
+    private static ArrayList<Persoon> leesPersonenIn(String bestandsnaam, ArrayList<Afdeling> afdelingen) {
+        ArrayList<Persoon> personen = new ArrayList<>();
+
+        try (Scanner personenLezer = new Scanner(new File(bestandsnaam))) {
+            while (personenLezer.hasNextLine()) {
+                String[] persoon = personenLezer.nextLine().split(",");
+
+                String type = persoon[0];
+                String naam = persoon[1];
+                String woonplaats = persoon[2];
+                int afdelingsindex = Integer.parseInt(persoon[3]);
+
+                switch (type) {
+                    case "Werknemer":
+                        double maandsalaris = Double.parseDouble(persoon[4]);
+                        personen.add(new Werknemer(naam, woonplaats, afdelingen.get(afdelingsindex), maandsalaris));
+                        break;
+                    case "Zzper":
+                        double uurtarief = Double.parseDouble(persoon[4]);
+                        personen.add(new ZZPer(naam, woonplaats, afdelingen.get(afdelingsindex), uurtarief));
+                        break;
+                    case "Vrijwilliger":
+                        personen.add(new Vrijwilliger(naam, woonplaats, afdelingen.get(afdelingsindex)));
+                        break;
+                    default:
+                        System.err.printf("Een persoon van onbekend type tegengekomen (type: %s), " +
+                                "deze persoon genegeerd.",
+                                type);
+                }
+            }
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.err.println("Het is niet gelukt het personenbestand te openen.");
+        }
+
+        return personen;
+    }
+
+    private static ArrayList<Afdeling> leesAfdelingenIn(String bestandsnaam) {
+        ArrayList<Afdeling> afdelingen = new ArrayList<>();
+
+        try (Scanner afdelingLezer = new Scanner(new File(bestandsnaam))) {
+            while (afdelingLezer.hasNextLine()) {
+                String afdelingsnaam = afdelingLezer.nextLine();
+                String afdelingsplaats = afdelingLezer.nextLine();
+
+                afdelingen.add(new Afdeling(afdelingsnaam, afdelingsplaats));
+            }
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.err.println("Het is niet gelukt het afdelingenbestand te openen.");
+        }
+
+        return afdelingen;
     }
 
     public static void toonJaarinkomen(Persoon persoon) {
