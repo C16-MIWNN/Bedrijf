@@ -23,11 +23,15 @@ public class BedrijfLauncher {
 
         AfdelingDAO afdelingDAO = new AfdelingDAO(dBaccess);
 
-        afdelingDAO.slaAfdelingOp(new Afdeling("HR2", "Hilversum"));
-        dBaccess.closeConnection();
+//        afdelingDAO.slaAfdelingOp(new Afdeling("HR2", "Hilversum"));
+//        dBaccess.closeConnection();
+//
+//        afdelingDAO.slaAfdelingOp(new Afdeling("HR3", "Hilversum"));
+//        dBaccess.closeConnection();
 
-        afdelingDAO.slaAfdelingOp(new Afdeling("HR3", "Hilversum"));
-        dBaccess.closeConnection();
+        for (Afdeling afdeling : afdelingDAO.geefAfdelingenMetPlaats("Hilversum")) {
+            System.out.println(afdeling);
+        }
 
     }
 
